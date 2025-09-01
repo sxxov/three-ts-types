@@ -14,10 +14,10 @@ interface LoopNodeObjectParameter {
 
 type LoopNodeParameter = Node | number | LoopNodeObjectParameter;
 
-declare class LoopNode extends Node {
-    params: unknown[];
+declare class LoopNode<Params extends unknown[] = unknown[]> extends Node {
+    params: Params;
 
-    constructor(params?: unknown[]);
+    constructor(params?: Params);
 
     getProperties(builder: NodeBuilder): unknown;
 }
@@ -25,12 +25,12 @@ declare class LoopNode extends Node {
 export default LoopNode;
 
 interface Loop {
-    (i: LoopNodeParameter, func: (inputs: { readonly i: number }) => void): ShaderNodeObject<Node>;
+    (i: LoopNodeParameter, func: (inputs: { readonly i: number }) => void): ShaderNodeObject<LoopNode>;
     (
         i: LoopNodeParameter,
         j: LoopNodeParameter,
         func: (inputs: { readonly i: number; readonly j: number }) => void,
-    ): ShaderNodeObject<Node>;
+    ): ShaderNodeObject<LoopNode>;
 }
 
 export const Loop: Loop;

@@ -2,27 +2,38 @@ import { ShaderNodeObject } from "../tsl/TSLCore.js";
 import Node from "./Node.js";
 import { NodeBuilderContext } from "./NodeBuilder.js";
 
-declare class ContextNode extends Node {
+declare class ContextNode<T extends Node = Node> extends Node {
     readonly isContextNode: true;
 
-    node: Node;
+    node: T;
     value: NodeBuilderContext;
 
-    constructor(node: Node, value?: NodeBuilderContext);
+    constructor(node: T, value?: NodeBuilderContext);
 }
 
 export default ContextNode;
 
-export const context: (node: Node, context?: NodeBuilderContext) => ShaderNodeObject<ContextNode>;
+export const context: <T extends Node>(
+    node: T,
+    context?: NodeBuilderContext,
+) => ShaderNodeObject<ContextNode<T>>;
 
-export const uniformFlow: (node: Node) => ShaderNodeObject<ContextNode>;
+export const uniformFlow: <T extends Node>(
+    node: T,
+) => ShaderNodeObject<ContextNode<T>>;
 
-export const setName: (node: Node, label: string) => ShaderNodeObject<ContextNode>;
+export const setName: <T extends Node>(
+    node: T,
+    label: string,
+) => ShaderNodeObject<ContextNode<T>>;
 
 /**
  * @deprecated "label()" has been deprecated. Use "setName()" instead.
  */
-export function label(node: Node, label: string): ShaderNodeObject<ContextNode>;
+export function label<T extends Node>(
+    node: T,
+    label: string,
+): ShaderNodeObject<ContextNode<T>>;
 
 declare module "../tsl/TSLCore.js" {
     interface NodeElements {

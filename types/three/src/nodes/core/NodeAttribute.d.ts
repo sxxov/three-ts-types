@@ -5,11 +5,15 @@ import Node from "./Node.js";
  * by the builder. Arrays of node attributes is maintained in {@link NodeBuilder#attributes}
  * and {@link NodeBuilder#bufferAttributes} for this purpose.
  */
-declare class NodeAttribute {
+declare class NodeAttribute<
+    Name extends string = string,
+    Type extends string | null = string | null,
+    Reference extends Node | null = Node | null,
+> {
     readonly isNodeAttribute: true;
-    name: string;
-    type: string | null;
-    node: Node | null;
+    name: Name;
+    type: Type;
+    node: Reference;
     /**
      * Constructs a new node attribute.
      *
@@ -17,6 +21,6 @@ declare class NodeAttribute {
      * @param {string} type - The type of the attribute.
      * @param {?Node} node - An optional reference to the node.
      */
-    constructor(name: string, type: string | null, node?: Node | null);
+    constructor(name: Name, type: Type, node?: Reference);
 }
 export default NodeAttribute;

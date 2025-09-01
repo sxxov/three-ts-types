@@ -4,23 +4,36 @@ import Node from "./Node.js";
 import NodeBuilder from "./NodeBuilder.js";
 import NodeVarying from "./NodeVarying.js";
 
-export default class VaryingNode extends Node {
-    node: Node;
-    name: string | null;
+export default class VaryingNode<
+    T extends Node = Node,
+    Name extends string | null = string | null,
+> extends Node {
+    node: T;
+    name: Name;
     readonly isVaryingNode: true;
     interpolationType: InterpolationSamplingType | null;
     interpolationSampling: InterpolationSamplingMode | null;
 
-    constructor(node: Node, name?: string | null);
+    constructor(node: T, name?: Name);
 
     setInterpolation(type: InterpolationSamplingType | null, sampling?: InterpolationSamplingMode | null): this;
 
     setupVarying(builder: NodeBuilder): NodeVarying;
 }
 
-export const varying: (node: Node, name?: string) => ShaderNodeObject<VaryingNode>;
+export const varying: <
+    T extends Node,
+    Name extends string | null = null,
+>(node: T, name?: Name) => ShaderNodeObject<
+    VaryingNode<T, Name>
+>;
 
-export const vertexStage: (node: Node) => ShaderNodeObject<VaryingNode>;
+export const vertexStage: <
+    T extends Node,
+    Name extends string | null = null,
+>(node: T, name?: Name) => ShaderNodeObject<
+    VaryingNode<T, Name>
+>;
 
 declare module "../tsl/TSLCore.js" {
     interface NodeElements {

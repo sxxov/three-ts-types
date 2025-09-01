@@ -1,32 +1,66 @@
 import Node from "../core/Node.js";
-import { ShaderNodeObject } from "../tsl/TSLCore.js";
+import { NodeObject, ShaderNodeObject } from "../tsl/TSLCore.js";
 
-export default class RemapNode extends Node {
-    node: Node;
-    inLowNode: Node;
-    inHighNode: Node;
-    outLowNode: Node;
-    outHighNode: Node;
+export default class RemapNode<
+    T extends Node = Node,
+    InLow extends Node = Node,
+    InHigh extends Node = Node,
+    OutLow extends Node = Node,
+    OutHigh extends Node = Node,
+> extends Node {
+    node: T;
+    inLowNode: InLow;
+    inHighNode: InHigh;
+    outLowNode: OutLow;
+    outHighNode: OutHigh;
 
     doClamp: boolean;
 
-    constructor(node: Node, inLowNode: Node, inHighNode: Node, outLowNode?: Node, outHighNode?: Node);
+    constructor(node: T, inLowNode: InLow, inHighNode: InHigh, outLowNode?: OutLow, outHighNode?: OutHigh);
 }
 
-export const remap: (
-    node: Node,
-    inLowNode: Node | number,
-    inHighNode: Node | number,
-    outLowNode?: Node | number,
-    outHighNode?: Node | number,
-) => ShaderNodeObject<RemapNode>;
-export const remapClamp: (
-    node: Node,
-    inLowNode: Node | number,
-    inHighNode: Node | number,
-    outLowNode?: Node | number,
-    outHighNode?: Node | number,
-) => ShaderNodeObject<RemapNode>;
+export const remap: <
+    T extends Node,
+    InLow extends Node | number,
+    InHigh extends Node | number,
+    OutLow extends Node | number = NodeObject<number>,
+    OutHigh extends Node | number = NodeObject<number>,
+>(
+    node: T,
+    inLowNode: InLow,
+    inHighNode: InHigh,
+    outLowNode?: OutLow,
+    outHighNode?: OutHigh,
+) => ShaderNodeObject<
+    RemapNode<
+        T,
+        NodeObject<InLow>,
+        NodeObject<InHigh>,
+        NodeObject<OutLow>,
+        NodeObject<OutHigh>
+    >
+>;
+export const remapClamp: <
+    T extends Node,
+    InLow extends Node | number,
+    InHigh extends Node | number,
+    OutLow extends Node | number = NodeObject<number>,
+    OutHigh extends Node | number = NodeObject<number>,
+>(
+    node: T,
+    inLowNode: InLow,
+    inHighNode: InHigh,
+    outLowNode?: OutLow,
+    outHighNode?: OutHigh,
+) => ShaderNodeObject<
+    RemapNode<
+        T,
+        NodeObject<InLow>,
+        NodeObject<InHigh>,
+        NodeObject<OutLow>,
+        NodeObject<OutHigh>
+    >
+>;
 
 declare module "../tsl/TSLCore.js" {
     interface NodeElements {

@@ -1,11 +1,14 @@
 import TempNode from "../core/TempNode.js";
 
-declare class SetNode extends TempNode {
-    sourceNode: Node;
+declare class SetNode<
+    Source extends Node = Node,
+    Target extends Node = Node,
+> extends TempNode {
+    sourceNode: Source;
     components: string[];
-    targetNode: Node;
+    targetNode: Target;
 
-    constructor(sourceNode: Node, components: string[], targetNode: Node);
+    constructor(sourceNode: Source, components: string[], targetNode: Target);
 }
 
 export default SetNode;

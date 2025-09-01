@@ -1,7 +1,7 @@
 import { Vector3 } from "../../math/Vector3.js";
 import Node from "../core/Node.js";
 import TempNode from "../core/TempNode.js";
-import { ShaderNodeObject } from "../tsl/TSLCore.js";
+import { NodeObject, ShaderNodeObject } from "../tsl/TSLCore.js";
 import OperatorNode from "./OperatorNode.js";
 
 export type MathNodeMethod1 =
@@ -56,9 +56,22 @@ export type MathNodeMethod3 =
     | typeof MathNode.SMOOTHSTEP
     | typeof MathNode.FACEFORWARD;
 
-export type MathNodeMethod = MathNodeMethod1 | MathNodeMethod2 | MathNodeMethod3;
+type MathNodeMethodSpecial =
+    | typeof MathNode.ALL
+    | typeof MathNode.ANY
+    | typeof MathNode.EQUALS;
 
-export default class MathNode extends TempNode {
+export type MathNodeMethod =
+    | MathNodeMethod1
+    | MathNodeMethod2
+    | MathNodeMethod3;
+
+export default class MathNode<
+    Method extends MathNodeMethod | MathNodeMethodSpecial = MathNodeMethod,
+    A extends Node = Node,
+    B extends Node | null = Node | null,
+    C extends Node | null = Node | null,
+> extends TempNode {
     // 1 input
 
     static ALL: "all";
@@ -118,16 +131,16 @@ export default class MathNode extends TempNode {
     static SMOOTHSTEP: "smoothstep";
     static FACEFORWARD: "faceforward";
 
-    method: MathNodeMethod;
-    aNode: Node;
-    bNode: Node | null;
-    cNode: Node | null;
+    method: Method;
+    aNode: A;
+    bNode: B;
+    cNode: C;
 
     readonly isMathNode: true;
 
-    constructor(method: MathNodeMethod1, aNode: Node);
-    constructor(method: MathNodeMethod2, aNode: Node, bNode: Node);
-    constructor(method: MathNodeMethod3, aNode: Node, bNode: Node, cNode: Node);
+    constructor(method: Method & MathNodeMethod1, aNode: A);
+    constructor(method: Method & MathNodeMethod2, aNode: A, bNode: B);
+    constructor(method: Method & MathNodeMethod3, aNode: A, bNode: B, cNode: C);
 }
 
 export const EPSILON: ShaderNodeObject<Node>;
@@ -137,98 +150,186 @@ export const PI2: ShaderNodeObject<Node>;
 
 type MathNodeParameter = Node | number;
 
-type Unary = (a: MathNodeParameter) => ShaderNodeObject<MathNode>;
+type Unary<
+    Method extends MathNodeMethod1 | MathNodeMethodSpecial = MathNodeMethod1,
+    A extends MathNodeParameter = MathNodeParameter,
+> = (
+    a: A,
+) => ShaderNodeObject<
+    MathNode<
+        Method,
+        NodeObject<A>,
+        null,
+        null
+    >
+>;
 
-export const all: Unary;
-export const any: Unary;
+export const all: Unary<typeof MathNode.ALL>;
+export const any: Unary<typeof MathNode.ANY>;
 
 /**
  * @deprecated "equals" is deprecated. Use "equal" inside a vector instead, like: "bvec*( equal( ... ) )"
  */
-export const equals: Unary;
+export const equals: Unary<typeof MathNode.EQUALS>;
 
-export const radians: Unary;
-export const degrees: Unary;
-export const exp: Unary;
-export const exp2: Unary;
-export const log: Unary;
-export const log2: Unary;
-export const sqrt: Unary;
-export const inverseSqrt: Unary;
-export const floor: Unary;
-export const ceil: Unary;
-export const normalize: (a: Node | Vector3) => ShaderNodeObject<MathNode>;
-export const fract: Unary;
-export const sin: Unary;
-export const cos: Unary;
-export const tan: Unary;
-export const asin: Unary;
-export const acos: Unary;
-export const atan: (a: MathNodeParameter, b?: MathNodeParameter) => ShaderNodeObject<MathNode>;
-export const abs: Unary;
-export const sign: Unary;
-export const length: Unary;
-export const negate: Unary;
-export const oneMinus: Unary;
-export const dFdx: Unary;
-export const dFdy: Unary;
-export const round: Unary;
-export const reciprocal: Unary;
-export const trunc: Unary;
-export const fwidth: Unary;
-export const transpose: Unary;
-export const determinant: (x: Node) => ShaderNodeObject<MathNode>;
-export const inverse: (x: Node) => ShaderNodeObject<MathNode>;
+export const radians: Unary<typeof MathNode.RADIANS>;
+export const degrees: Unary<typeof MathNode.DEGREES>;
+export const exp: Unary<typeof MathNode.EXP>;
+export const exp2: Unary<typeof MathNode.EXP2>;
+export const log: Unary<typeof MathNode.LOG>;
+export const log2: Unary<typeof MathNode.LOG2>;
+export const sqrt: Unary<typeof MathNode.SQRT>;
+export const inverseSqrt: Unary<typeof MathNode.INVERSE_SQRT>;
+export const floor: Unary<typeof MathNode.FLOOR>;
+export const ceil: Unary<typeof MathNode.CEIL>;
+export const normalize: <A extends Node | Vector3>(
+    a: A,
+) => ShaderNodeObject<
+    MathNode<
+        typeof MathNode.NORMALIZE,
+        A extends Node ? A : Node,
+        null,
+        null
+    >
+>;
+export const fract: Unary<typeof MathNode.FRACT>;
+export const sin: Unary<typeof MathNode.SIN>;
+export const cos: Unary<typeof MathNode.COS>;
+export const tan: Unary<typeof MathNode.TAN>;
+export const asin: Unary<typeof MathNode.ASIN>;
+export const acos: Unary<typeof MathNode.ACOS>;
+export const atan: <
+    A extends MathNodeParameter,
+    B extends MathNodeParameter,
+>(a: A, b?: B) => ShaderNodeObject<
+    MathNode<
+        typeof MathNode.ATAN,
+        NodeObject<A>,
+        NodeObject<B>,
+        null
+    >
+>;
+export const abs: Unary<typeof MathNode.ABS>;
+export const sign: Unary<typeof MathNode.SIGN>;
+export const length: Unary<typeof MathNode.LENGTH>;
+export const negate: Unary<typeof MathNode.NEGATE>;
+export const oneMinus: Unary<typeof MathNode.ONE_MINUS>;
+export const dFdx: Unary<typeof MathNode.DFDX>;
+export const dFdy: Unary<typeof MathNode.DFDY>;
+export const round: Unary<typeof MathNode.ROUND>;
+export const reciprocal: Unary<typeof MathNode.RECIPROCAL>;
+export const trunc: Unary<typeof MathNode.TRUNC>;
+export const fwidth: Unary<typeof MathNode.FWIDTH>;
+export const transpose: Unary<typeof MathNode.TRANSPOSE>;
+export const determinant: <T extends Node>(x: T) => ShaderNodeObject<
+    MathNode<
+        typeof MathNode.DETERMINANT,
+        T,
+        null,
+        null
+    >
+>;
+export const inverse: <T extends Node>(x: T) => ShaderNodeObject<
+    MathNode<
+        typeof MathNode.INVERSE,
+        T,
+        null,
+        null
+    >
+>;
 
-type Binary = (a: MathNodeParameter, b: MathNodeParameter) => ShaderNodeObject<MathNode>;
+type Binary<
+    Method extends MathNodeMethod2 = MathNodeMethod2,
+    A extends MathNodeParameter = MathNodeParameter,
+    B extends MathNodeParameter = MathNodeParameter,
+> = (a: A, b: B) => ShaderNodeObject<
+    MathNode<
+        Method,
+        NodeObject<A>,
+        NodeObject<B>,
+        null
+    >
+>;
+type UnaryMul = <A extends MathNodeParameter>(
+    a: A,
+) => ShaderNodeObject<
+    OperatorNode<
+        "*",
+        NodeObject<A>,
+        NodeObject<A>
+    >
+>;
 
-export const min: (
-    x: MathNodeParameter,
-    y: MathNodeParameter,
+export const min: <A extends MathNodeParameter, B extends MathNodeParameter>(
+    x: A,
+    y: B,
     ...values: MathNodeParameter[]
-) => ShaderNodeObject<MathNode>;
-export const max: (
-    x: MathNodeParameter,
-    y: MathNodeParameter,
+) => ShaderNodeObject<MathNode<typeof MathNode.MIN, NodeObject<A>, NodeObject<B>, null>>;
+export const max: <A extends MathNodeParameter, B extends MathNodeParameter>(
+    x: A,
+    y: B,
     ...values: MathNodeParameter[]
-) => ShaderNodeObject<MathNode>;
-export const step: Binary;
-export const reflect: Binary;
-export const distance: Binary;
-export const difference: Binary;
-export const dot: Binary;
+) => ShaderNodeObject<MathNode<typeof MathNode.MAX, NodeObject<A>, NodeObject<B>, null>>;
+export const step: Binary<typeof MathNode.STEP>;
+export const reflect: Binary<typeof MathNode.REFLECT>;
+export const distance: Binary<typeof MathNode.DISTANCE>;
+export const difference: Binary<typeof MathNode.DISTANCE>; // alias?
+export const dot: Binary<typeof MathNode.DOT>;
 export const cross: (x: Node, y: Node) => ShaderNodeObject<MathNode>;
-export const pow: Binary;
-export const pow2: Unary;
-export const pow3: Unary;
-export const pow4: Unary;
-export const transformDirection: Binary;
-export const cbrt: Unary;
-export const lengthSq: Unary;
+export const pow: Binary<typeof MathNode.POW>;
+export const pow2: UnaryMul;
+export const pow3: UnaryMul;
+export const pow4: UnaryMul;
+export const transformDirection: Binary<typeof MathNode.TRANSFORM_DIRECTION>;
+export const cbrt: UnaryMul;
+export const lengthSq: UnaryMul;
 
-type Ternary = (a: MathNodeParameter, b: MathNodeParameter, c: MathNodeParameter) => ShaderNodeObject<MathNode>;
+type Ternary<
+    Method extends MathNodeMethod3 = MathNodeMethod3,
+    A extends MathNodeParameter = MathNodeParameter,
+    B extends MathNodeParameter = MathNodeParameter,
+    C extends MathNodeParameter = MathNodeParameter,
+> = (a: A, b: B, c: C) => ShaderNodeObject<
+    MathNode<
+        Method,
+        NodeObject<A>,
+        NodeObject<B>,
+        NodeObject<C>
+    >
+>;
 
-export const mix: Ternary;
-export const clamp: (
-    a: MathNodeParameter,
-    b?: MathNodeParameter,
-    c?: MathNodeParameter,
-) => ShaderNodeObject<MathNode>;
-export const saturate: Unary;
-export const refract: Ternary;
-export const smoothstep: Ternary;
-export const faceForward: Ternary;
+export const mix: Ternary<typeof MathNode.MIX>;
+export const clamp: <
+    A extends MathNodeParameter,
+    B extends MathNodeParameter | undefined = undefined,
+    C extends MathNodeParameter | undefined = undefined,
+>(
+    a: A,
+    b?: B,
+    c?: C,
+) => ShaderNodeObject<
+    MathNode<
+        typeof MathNode.CLAMP,
+        NodeObject<A>,
+        B extends undefined ? null : NodeObject<B>,
+        C extends undefined ? null : NodeObject<C>
+    >
+>;
+export const saturate: UnaryMul;
+export const refract: Ternary<typeof MathNode.REFRACT>;
+export const smoothstep: Ternary<typeof MathNode.SMOOTHSTEP>;
+export const faceForward: Ternary<typeof MathNode.FACEFORWARD>;
 
 export const rand: (uv: MathNodeParameter) => ShaderNodeObject<OperatorNode>;
 
-export const mixElement: Ternary;
-export const smoothstepElement: Ternary;
-export const stepElement: Binary;
+export const mixElement: Ternary<typeof MathNode.MIX>;
+export const smoothstepElement: Ternary<typeof MathNode.SMOOTHSTEP>;
+export const stepElement: Binary<typeof MathNode.STEP>;
 
 /**
  * @deprecated
  */
-export const atan2: Binary;
+export const atan2: typeof atan;
 
 // GLSL alias function
 

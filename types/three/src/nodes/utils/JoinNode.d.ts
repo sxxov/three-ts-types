@@ -4,7 +4,7 @@ import { TempNode } from "../Nodes.js";
 /**
  * This node constructs given type from elements, like vec3(a,b,c)
  */
-export default class JoinNode extends TempNode {
-    nodes: Node[];
-    constructor(nodes: Node[]);
+export default class JoinNode<T extends Node[] = Node[]> extends TempNode {
+    nodes: T;
+    constructor(nodes: T);
 }

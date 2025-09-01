@@ -23,14 +23,18 @@ export type OperatorNodeOp =
     | "*"
     | "/";
 
-export default class OperatorNode extends TempNode {
-    aNode: Node;
-    bNode: Node;
-    op: OperatorNodeOp;
+export default class OperatorNode<
+    Op extends OperatorNodeOp = OperatorNodeOp,
+    A extends Node = Node,
+    B extends Node = Node,
+> extends TempNode {
+    aNode: A;
+    bNode: B;
+    op: Op;
 
     readonly isOperatorNode: true;
 
-    constructor(op: OperatorNodeOp, ...params: [Node, Node, ...Node[]]);
+    constructor(op: Op, ...params: [A, B, ...Node[]]);
 }
 
 type OperatorNodeParameter = Node | number;

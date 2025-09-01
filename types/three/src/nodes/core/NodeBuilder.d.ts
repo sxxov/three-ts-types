@@ -90,7 +90,10 @@ export default abstract class NodeBuilder {
 
     generateMethod(method: string): string;
 
-    getAttribute(name: string, type: string): NodeAttribute;
+    getAttribute<
+        Name extends string,
+        Type extends string,
+    >(name: Name, type: Type): NodeAttribute<Name, Type>;
 
     getPropertyName<TValue>(node: NodeVar | NodeUniform<TValue>, shaderStage: NodeShaderStage): string;
     isVector(type: string): boolean;
@@ -105,14 +108,14 @@ export default abstract class NodeBuilder {
     getVectorFromMatrix(type: string): string;
     getDataFromNode(node: Node, shaderStage?: NodeShaderStage): NodeData;
     getNodeProperties(node: Node, shaderStage?: NodeShaderStage): { [key: string]: unknown };
-    getUniformFromNode(
+    getUniformFromNode<Type extends string>(
         node: Node,
-        type: string,
+        type: Type,
         shaderStage?: NodeShaderStage,
         name?: string | null,
-    ): NodeUniform<string>;
-    getVarFromNode(node: Node, type: string, shaderStage?: NodeShaderStage): NodeVar;
-    getVaryFromNode(node: Node, type: string): NodeVarying;
+    ): NodeUniform<string, Type>;
+    getVarFromNode<Type extends string>(node: Node, type: Type, shaderStage?: NodeShaderStage): NodeVar<string, Type>;
+    getVaryFromNode<Type extends string>(node: Node, type: Type): NodeVarying<string, Type>;
     getCodeFromNode(node: Node, type: string, shaderStage?: NodeShaderStage): string;
     addFlowCode(code: string): void;
     getFlowData(node: Node, shaderStage: NodeShaderStage): FlowData;

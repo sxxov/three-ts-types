@@ -3,18 +3,24 @@ import Node from "../core/Node.js";
 import { ShaderNodeObject } from "../tsl/TSLCore.js";
 import ArrayElementNode from "./ArrayElementNode.js";
 
-export default class StorageArrayElementNode extends ArrayElementNode {
-    node: StorageBufferNode;
+export default class StorageArrayElementNode<
+    Element extends StorageBufferNode = StorageBufferNode,
+    Index extends Node = Node,
+> extends ArrayElementNode<Element, Index> {
+    node: Element;
 
     readonly isStorageArrayElementNode: true;
 
-    constructor(storageBufferNode: StorageBufferNode, indexNode: Node);
+    constructor(storageBufferNode: Element, indexNode: Index);
 
-    get storageBufferNode(): StorageBufferNode;
-    set storageBufferNode(value: StorageBufferNode);
+    get storageBufferNode(): Element;
+    set storageBufferNode(value: Element);
 }
 
-export const storageElement: (
-    storageBufferNode: Node,
-    indexNode: Node,
-) => ShaderNodeObject<StorageArrayElementNode>;
+export const storageElement: <
+    Element extends StorageBufferNode,
+    Index extends Node,
+>(
+    storageBufferNode: Element,
+    indexNode: Index,
+) => ShaderNodeObject<StorageArrayElementNode<Element, Index>>;

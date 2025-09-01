@@ -1,17 +1,33 @@
 import { ShaderNodeObject } from "../tsl/TSLCore.js";
 import Node from "./Node.js";
 
-export default class PropertyNode extends Node {
-    name: string | null;
-    varying: boolean;
+export default class PropertyNode<
+    Type extends string | null = string | null,
+    Name extends string | null = string | null,
+    Varying extends boolean = boolean,
+> extends Node<Type> {
+    name: Name;
+    varying: Varying;
 
     readonly isPropertyNode: true;
 
-    constructor(nodeType?: string | null, name?: string | null, varying?: boolean);
+    constructor(nodeType?: Type, name?: Name, varying?: Varying);
 }
 
-export const property: (type?: string | null, name?: string | null) => ShaderNodeObject<PropertyNode>;
-export const varyingProperty: (type?: string | null, name?: string | null) => ShaderNodeObject<PropertyNode>;
+export const property: <
+    Type extends string | null = null,
+    Name extends string | null = null,
+>(
+    type?: Type,
+    name?: Name,
+) => ShaderNodeObject<PropertyNode<Type, Name>>;
+export const varyingProperty: <
+    Type extends string | null = null,
+    Name extends string | null = null,
+>(
+    type?: Type,
+    name?: Name,
+) => ShaderNodeObject<PropertyNode<Type, Name>>;
 
 export const diffuseColor: ShaderNodeObject<PropertyNode>;
 export const emissive: ShaderNodeObject<PropertyNode>;

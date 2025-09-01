@@ -1,21 +1,35 @@
 import Node from "../core/Node.js";
-import { ShaderNodeObject } from "../tsl/TSLCore.js";
+import { NodeObject, ShaderNodeObject } from "../tsl/TSLCore.js";
 
-declare class ConditionalNode extends Node {
-    condNode: Node;
-    ifNode: Node;
-    elseNode: Node | null;
+declare class ConditionalNode<
+    Conditional extends Node = Node,
+    If extends Node = Node,
+    Else extends Node | null = Node | null,
+> extends Node {
+    condNode: Conditional;
+    ifNode: If;
+    elseNode: Else;
 
-    constructor(condNode: Node, ifNode: Node, elseNode?: Node | null);
+    constructor(condNode: Conditional, ifNode: If, elseNode?: Else);
 }
 
 export default ConditionalNode;
 
-export const select: (
-    condNode: Node,
-    ifNode: Node | number,
-    elseNode?: Node | number | null,
-) => ShaderNodeObject<Node>;
+export const select: <
+    Conditional extends Node,
+    If extends Node | number,
+    Else extends Node | number | null = null,
+>(
+    condNode: Conditional,
+    ifNode: If,
+    elseNode?: Else,
+) => ShaderNodeObject<
+    ConditionalNode<
+        Conditional,
+        NodeObject<If>,
+        NodeObject<Else>
+    >
+>;
 
 declare module "../tsl/TSLCore.js" {
     interface NodeElements {

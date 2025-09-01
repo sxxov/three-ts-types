@@ -8,11 +8,16 @@ import NodeVar from "./NodeVar.js";
  *
  * @augments NodeVar
  */
-declare class NodeVarying extends NodeVar {
+declare class NodeVarying<
+    Name extends string = string,
+    Type extends string = string,
+    InterpolationType extends InterpolationSamplingType | null = InterpolationSamplingType | null,
+    InterpolationSampling extends InterpolationSamplingMode | null = InterpolationSamplingMode | null,
+> extends NodeVar<Name, Type> {
     needsInterpolation: boolean;
     readonly isNodeVarying: true;
-    interpolationType: InterpolationSamplingType | null;
-    interpolationSampling: InterpolationSamplingMode | null;
+    interpolationType: InterpolationType | null;
+    interpolationSampling: InterpolationSampling | null;
     /**
      * Constructs a new node varying.
      *
@@ -22,10 +27,10 @@ declare class NodeVarying extends NodeVar {
      * @param {?string} interpolationSampling - The interpolation sampling type of the varying.
      */
     constructor(
-        name: string,
-        type: string,
-        interpolationType?: InterpolationSamplingType | null,
-        interpolationSampling?: InterpolationSamplingMode | null,
+        name: Name,
+        type: Type,
+        interpolationType?: InterpolationType | null,
+        interpolationSampling?: InterpolationSampling | null,
     );
 }
 export default NodeVarying;

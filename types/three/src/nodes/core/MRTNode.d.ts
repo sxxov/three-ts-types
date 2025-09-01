@@ -5,12 +5,16 @@ import OutputStructNode from "./OutputStructNode.js";
 
 export function getTextureIndex(textures: ReadonlyArray<Texture>, name: string): number;
 
-declare class MRTNode extends OutputStructNode {
-    outputNodes: { [name: string]: Node };
+type MRTOutputNodes = { [name: string]: Node };
+
+declare class MRTNode<
+    Output extends MRTOutputNodes = MRTOutputNodes,
+> extends OutputStructNode {
+    outputNodes: Output;
 
     readonly isMRTNode: true;
 
-    constructor(outputNodes: { [name: string]: Node });
+    constructor(outputNodes: Output);
 
     has(name: string): boolean;
 
@@ -21,4 +25,6 @@ declare class MRTNode extends OutputStructNode {
 
 export default MRTNode;
 
-export const mrt: (outputNodes: { [name: string]: Node }) => ShaderNodeObject<MRTNode>;
+export const mrt: <
+    Output extends MRTOutputNodes,
+>(outputNodes: Output) => ShaderNodeObject<MRTNode<Output>>;

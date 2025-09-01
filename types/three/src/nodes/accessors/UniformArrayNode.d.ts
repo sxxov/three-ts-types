@@ -7,14 +7,17 @@ declare class UniformArrayElementNode extends ArrayElementNode {
     constructor(arrayBuffer: Node, indexNode: Node);
 }
 
-declare class UniformArrayNode extends BufferNode<unknown[]> {
-    array: unknown[];
-    elementType: string | null;
+declare class UniformArrayNode<
+    Value extends unknown[] = unknown[],
+    Type extends string | null = string | null,
+> extends BufferNode<unknown[]> {
+    array: Value;
+    elementType: Type;
     paddedType: string;
 
     readonly isArrayBufferNode: true;
 
-    constructor(value: unknown[], elementType?: string | null);
+    constructor(value: Value, elementType?: Type);
 
     getPaddedType(): string;
 
@@ -23,4 +26,10 @@ declare class UniformArrayNode extends BufferNode<unknown[]> {
 
 export default UniformArrayNode;
 
-export const uniformArray: (values: unknown[], nodeType?: string | null) => ShaderNodeObject<UniformArrayNode>;
+export const uniformArray: <
+    Value extends unknown[],
+    Type extends string | null = null,
+>(
+    values: Value,
+    nodeType?: Type,
+) => ShaderNodeObject<UniformArrayNode<Value, Type>>;

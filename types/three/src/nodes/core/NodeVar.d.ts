@@ -4,12 +4,17 @@
  * by the builder. A dictionary of node variables is maintained in {@link NodeBuilder#vars} for
  * this purpose.
  */
-declare class NodeVar {
+declare class NodeVar<
+    Name extends string = string,
+    Type extends string = string,
+    ReadOnly extends boolean = boolean,
+    Count extends number | null = number | null,
+> {
     readonly isNodeVar: true;
-    name: string;
-    type: string;
-    readOnly: boolean;
-    count: number | null;
+    name: Name;
+    type: Type;
+    readOnly: ReadOnly;
+    count: Count;
     /**
      * Constructs a new node variable.
      *
@@ -18,6 +23,6 @@ declare class NodeVar {
      * @param {boolean} [readOnly=false] - The read-only flag.
      * @param {?number} [count=null] - The size.
      */
-    constructor(name: string, type: string, readOnly?: boolean, count?: number | null);
+    constructor(name: Name, type: Type, readOnly?: ReadOnly, count?: Count);
 }
 export default NodeVar;

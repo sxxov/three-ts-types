@@ -1,15 +1,27 @@
 import { ShaderNodeObject } from "../tsl/TSLCore.js";
 import Node from "./Node.js";
 
-declare class SubBuildNode extends Node {
-    node: Node;
-    name: string;
+declare class SubBuildNode<
+    T extends Node = Node,
+    Name extends string = string,
+    Type extends string | null = string | null,
+> extends Node {
+    node: T;
+    name: Name;
 
     readonly isSubBuildNode: true;
 
-    constructor(node: Node, name: string, nodeType?: string | null);
+    constructor(node: T, name: Name, nodeType?: Type);
 }
 
 export default SubBuildNode;
 
-export const subBuild: (node: Node, name: string, type?: string | null) => ShaderNodeObject<SubBuildNode>;
+export const subBuild: <
+    T extends Node,
+    Name extends string,
+    Type extends string | null = null,
+>(
+    node: T,
+    name: Name,
+    type?: Type,
+) => ShaderNodeObject<SubBuildNode<T, Name, Type>>;

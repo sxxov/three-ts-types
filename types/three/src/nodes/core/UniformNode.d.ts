@@ -9,7 +9,10 @@ import UniformGroupNode from "./UniformGroupNode.js";
  *
  * @augments InputNode
  */
-declare class UniformNode<TValue> extends InputNode<TValue> {
+declare class UniformNode<
+    T,
+    Type extends string | null = string | null,
+> extends InputNode<T, Type> {
     static get type(): string;
     readonly isUniformNode: true;
     name: string;
@@ -20,7 +23,7 @@ declare class UniformNode<TValue> extends InputNode<TValue> {
      * @param {any} value - The value of this node. Usually a JS primitive or three.js object (vector, matrix, color, texture).
      * @param {?string} nodeType - The node type. If no explicit type is defined, the node tries to derive the type from its value.
      */
-    constructor(value: TValue, nodeType?: string | null);
+    constructor(value: T, nodeType?: Type);
     /**
      * Sets the {@link UniformNode#name} property.
      *
@@ -57,7 +60,7 @@ declare class UniformNode<TValue> extends InputNode<TValue> {
      * @return {string} The uniform hash.
      */
     getUniformHash(builder: NodeBuilder): string;
-    onUpdate(callback: (frame: NodeFrame, self: this) => TValue | undefined, updateType: NodeUpdateType): this;
+    onUpdate(callback: (frame: NodeFrame, self: this) => T | undefined, updateType: NodeUpdateType): this;
     getInputType(builder: NodeBuilder): string | null;
     generate(builder: NodeBuilder, output: string | null): string;
 }

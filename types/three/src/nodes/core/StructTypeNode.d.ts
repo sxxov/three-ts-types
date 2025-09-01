@@ -19,10 +19,21 @@ export interface MemberLayout {
  *
  * @augments Node
  */
-declare class StructTypeNode extends Node {
+declare class StructTypeNode<
+    const Layout extends MembersLayout = MembersLayout,
+    Name extends string | null = string | null,
+> extends Node {
     static get type(): string;
-    membersLayout: MemberLayout[];
-    name: string | null;
+    membersLayout: ({
+        [K in keyof Layout]: {
+            name: K;
+            type: Layout[K] extends string ? Layout[K]
+                : Layout[K] extends { type: infer U } ? U
+                : never;
+            atomic: Layout[K] extends { atomic: infer U } ? U : false;
+        };
+    }[keyof Layout])[];
+    name: Name;
     readonly isStructLayoutNode: true;
     /**
      * Creates an instance of StructTypeNode.
@@ -30,7 +41,7 @@ declare class StructTypeNode extends Node {
      * @param {Object} membersLayout - The layout of the members for the struct.
      * @param {?string} [name=null] - The optional name of the struct.
      */
-    constructor(membersLayout: MembersLayout, name?: string | null);
+    constructor(membersLayout: Layout, name?: Name);
     /**
      * Returns the length of the struct.
      * The length is calculated by summing the lengths of the struct's members.

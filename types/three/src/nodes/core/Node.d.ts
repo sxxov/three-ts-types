@@ -62,11 +62,11 @@ interface NodeJSONOutputData {
  *
  * @augments EventDispatcher
  */
-declare class Node extends EventDispatcher<{
+declare class Node<Type extends string | null = string | null> extends EventDispatcher<{
     dispose: {};
 }> {
     static get type(): string;
-    nodeType: string | null;
+    nodeType: Type;
     updateType: NodeUpdateType;
     updateBeforeType: NodeUpdateType;
     updateAfterType: NodeUpdateType;
@@ -84,7 +84,7 @@ declare class Node extends EventDispatcher<{
      *
      * @param {?string} nodeType - The node type.
      */
-    constructor(nodeType?: string | null);
+    constructor(nodeType?: Type);
     /**
      * Set this property to `true` when the node should be regenerated.
      *

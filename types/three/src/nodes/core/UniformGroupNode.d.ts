@@ -1,14 +1,14 @@
 import Node from "./Node.js";
 
-export default class UniformGroupNode extends Node {
-    name: string;
+export default class UniformGroupNode<Name extends string = string> extends Node {
+    name: Name;
     version: number;
 
     shared: boolean;
 
     readonly isUniformGroup: true;
 
-    constructor(name: string, shared?: boolean);
+    constructor(name: Name, shared?: boolean);
 
     set needsUpdate(value: boolean);
 }

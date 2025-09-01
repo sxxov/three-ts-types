@@ -8,10 +8,10 @@ export interface RTTNodeOptions {
     type: TextureDataType;
 }
 
-declare class RTTNode extends TextureNode {
+declare class RTTNode<T extends Node = Node> extends TextureNode {
     readonly isRTTNode: true;
 
-    node: Node;
+    node: T;
     width: number | null;
     height: number | null;
 
@@ -22,7 +22,7 @@ declare class RTTNode extends TextureNode {
 
     pixelRatio?: number;
 
-    constructor(node: Node, width?: number | null, height?: number | null, options?: RTTNodeOptions);
+    constructor(node: T, width?: number | null, height?: number | null, options?: RTTNodeOptions);
 
     get autoResize(): boolean;
 
@@ -33,15 +33,15 @@ declare class RTTNode extends TextureNode {
 
 export default RTTNode;
 
-export const rtt: (
-    node: Node,
+export const rtt: <T extends Node>(
+    node: T,
     width?: number | null,
     height?: number | null,
     options?: RTTNodeOptions,
-) => ShaderNodeObject<RTTNode>;
-export const convertToTexture: (
-    node: Node,
+) => ShaderNodeObject<RTTNode<T>>;
+export const convertToTexture: <T extends Node>(
+    node: T,
     width?: number | null,
     height?: number | null,
     options?: RTTNodeOptions,
-) => ShaderNodeObject<RTTNode>;
+) => ShaderNodeObject<RTTNode<T>>;

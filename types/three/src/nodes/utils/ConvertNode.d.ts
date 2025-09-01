@@ -1,7 +1,7 @@
 import Node from "../core/Node.js";
 
-export default class ConvertNode extends Node {
-    node: Node;
+export default class ConvertNode<T extends Node = Node> extends Node {
+    node: T;
     convertTo: string;
-    constructor(node: Node, convertTo: string);
+    constructor(node: T, convertTo: string);
 }
